@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Sitecore.CH.Integration.AssetImporter.Functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7197",
+      "launchBrowser": false
+    }
+  }
+}

@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.CH.Integration.AssetImporter.AppHost", "Sitecore.CH.Integration.AssetImporter.AppHost\Sitecore.CH.Integration.AssetImporter.AppHost.csproj", "{71461B99-29EF-44F0-8D24-331C24174744}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.CH.Integration.AssetImporter.ServiceDefaults", "Sitecore.CH.Integration.AssetImporter.ServiceDefaults\Sitecore.CH.Integration.AssetImporter.ServiceDefaults.csproj", "{A03E2720-DF77-FE4B-8A16-1E11429E8530}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.CH.Integration.AssetImporter.Functions", "Sitecore.CH.Integration.AssetImporter.Functions\Sitecore.CH.Integration.AssetImporter.Functions.csproj", "{2DE8EECE-8C67-4F65-ABCE-ED77A1635714}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71461B99-29EF-44F0-8D24-331C24174744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71461B99-29EF-44F0-8D24-331C24174744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71461B99-29EF-44F0-8D24-331C24174744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71461B99-29EF-44F0-8D24-331C24174744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A03E2720-DF77-FE4B-8A16-1E11429E8530}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A03E2720-DF77-FE4B-8A16-1E11429E8530}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A03E2720-DF77-FE4B-8A16-1E11429E8530}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A03E2720-DF77-FE4B-8A16-1E11429E8530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DE8EECE-8C67-4F65-ABCE-ED77A1635714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DE8EECE-8C67-4F65-ABCE-ED77A1635714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DE8EECE-8C67-4F65-ABCE-ED77A1635714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DE8EECE-8C67-4F65-ABCE-ED77A1635714}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69EC59CE-44DF-4179-9D86-8C4329D59F04}
+	EndGlobalSection
+EndGlobal
