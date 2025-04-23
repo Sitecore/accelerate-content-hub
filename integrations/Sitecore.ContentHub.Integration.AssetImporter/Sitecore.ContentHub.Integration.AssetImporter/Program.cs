@@ -14,6 +14,10 @@ builder.Services
     .AddTransient<IApplicationSettings, ApplicationSettings>()
     .AddTransient<IContentHubClientFactory, ContentHubClientFactory>()
     .AddTransient<IContentHubClientHelper, ContentHubClientHelper>()
+    .AddTransient<IContentHubEntityHelper, ContentHubEntityHelper>()
+    .AddTransient<IContentHubSearchHelper, ContentHubSearchHelper>()
+    .AddTransient<IExportWorker, ExportWorker>()
+    .AddTransient<IExcelHelper, ExcelHelper>()
     .AddTransient<IStorageService, StorageService>()
     .AddTransient<IUploadService, UploadService>()
     .AddTransient<IUploadWorker, UploadWorker>();

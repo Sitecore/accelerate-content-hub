@@ -4,6 +4,7 @@ using Sitecore.ContentHub.Integration.AssetImporter.Constants;
 using Sitecore.ContentHub.Integration.AssetImporter.Models;
 using Sitecore.ContentHub.Integration.AssetImporter.Services.Abstract;
 using Stylelabs.M.Sdk.WebClient.Http;
+using System.Net.Mime;
 using System.Text;
 
 namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Concrete
@@ -33,7 +34,7 @@ namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Concrete
         async Task<UploadRequestResponse> RequestUpload(string name, byte[] content, string uploadConfigurationName, string uploadActionName)
         {
             var uploadContent = $"{{\"file_name\": \"{name}\", \"file_size\": {content.Length}, \"upload_configuration\": {{ \"name\": \"{uploadConfigurationName}\" }}, \"action\": {{ \"name\": \"{uploadActionName}\" }} }}";
-            var jsonContent = new StringContent(uploadContent, Encoding.UTF8, "application/json");
+            var jsonContent = new StringContent(uploadContent, Encoding.UTF8, MediaTypeNames.Application.Json);
             var response = await contentHubClientHelper.Execute(client => client.Raw.PostAsync(ApiConstants.Endpoints.UploadRequest, jsonContent));
 
 

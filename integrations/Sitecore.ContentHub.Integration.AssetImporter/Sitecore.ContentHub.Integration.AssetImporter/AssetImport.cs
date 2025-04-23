@@ -9,7 +9,6 @@ namespace Sitecore.ContentHub.Integration.AssetImporter
     public class AssetImport(ILoggerFactory loggerFactory, IUploadWorker uploadWorker)
     {
         private readonly ILogger logger = loggerFactory.CreateLogger<AssetImport>();
-        private readonly IUploadWorker uploadWorker = uploadWorker;
 
         [Function("AssetImporterTimer")]
         public async Task RunTimer([TimerTrigger("0 */15 * * * *")] TimerInfo timer)
