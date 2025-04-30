@@ -1,0 +1,34 @@
+{
+    "CultureMaps": [
+      {
+        "ContentHubCulture": "en-US",
+        "SearchCulture": "en_us"
+      }
+    ],
+    "DefinitionMaps": [
+      {
+        "ContentHubEntityDefinition": "M.PCM.Product",
+        "SearchEntity": "Product",
+        "FieldMaps": [
+          {
+            "Type": "property",
+            "SearchAttributeName": "name",
+            "ContentHubPropertyName": "ProductName"
+          },
+          {
+            "Type": "relation",
+            "SearchAttributeName": "catalogNames",
+            "ContentHubRelationName": "PCMCatalogToProduct",
+            "ContentHubRelatedPropertyName": "CatalogName"
+          },
+
+          {
+            "Type": "relation",
+            "SearchAttributeName": "catalogNames-culture",
+            "ContentHubRelationName": "PCMCatalogToProduct",
+            "ContentHubRelatedPropertyName": "CatalogLabel"
+          }
+        ]
+      }
+    ]
+}
