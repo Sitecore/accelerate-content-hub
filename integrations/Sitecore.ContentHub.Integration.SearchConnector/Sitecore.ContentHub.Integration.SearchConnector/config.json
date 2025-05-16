@@ -3,12 +3,16 @@
       {
         "ContentHubCulture": "en-US",
         "SearchCulture": "en_us"
+      },
+      {
+        "ContentHubCulture": "fr-FR",
+        "SearchCulture": "fr_fr"
       }
     ],
     "DefinitionMaps": [
       {
         "ContentHubEntityDefinition": "M.PCM.Product",
-        "SearchEntity": "Product",
+        "SearchEntity": "contenthubproduct",
         "FieldMaps": [
           {
             "Type": "property",
@@ -17,16 +21,51 @@
           },
           {
             "Type": "relation",
-            "SearchAttributeName": "catalogNames",
-            "ContentHubRelationName": "PCMCatalogToProduct",
-            "ContentHubRelatedPropertyName": "CatalogName"
+            "SearchAttributeName": "catalog_names",
+            "ContentHubRelations": [
+              {
+                "Name": "PCMCatalogToProduct",
+                "Role": "Child"
+              }
+            ],
+            "ContentHubRelatedPropertyName": "CatalogLabel"
           },
-
           {
             "Type": "relation",
-            "SearchAttributeName": "catalogNames-culture",
-            "ContentHubRelationName": "PCMCatalogToProduct",
-            "ContentHubRelatedPropertyName": "CatalogLabel"
+            "SearchAttributeName": "markets",
+            "ContentHubRelations": [
+              {
+                "Name": "PCMCatalogToProduct",
+                "Role": "Child"
+              },
+              {
+                "Name": "PCMMarketToCatalog",
+                "Role": "Parent"
+              }
+            ],
+            "ContentHubRelatedPropertyName": "MarketLabel"
+          },
+          {
+            "Type": "publiclink",
+            "SearchAttributeName": "image_url",
+            "ContentHubRelations": [
+              {
+                "Name": "PCMProductToMasterAsset",
+                "Role": "Parent"
+              }
+            ],
+            "ContentHubResourceName": "downloadOriginal",
+            "CreateLinkIfNotExists": true
+          },
+          {
+            "Type": "extractedcontent",
+            "SearchAttributeName": "description",
+            "ContentHubRelations": [
+              {
+                "Name": "PCMProductToDocumentAsset",
+                "Role": "Parent"
+              }
+            ]
           }
         ]
       }

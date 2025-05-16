@@ -18,10 +18,18 @@ builder.ConfigureFunctionsWebApplication();
 
 builder.Services
     .AddSingleton<IConfigHelper, ConfigHelper>()
+    .AddTransient<IContentHubAssetService, ContentHubAssetService>()
     .AddTransient<IContentHubClientFactory, ContentHubClientFactory>()
     .AddTransient<IContentHubClientHelper, ContentHubClientHelper>()
+    .AddTransient<IContentHubEntityLoadConfigurationHelper, ContentHubEntityLoadConfigurationHelper>()
     .AddTransient<IContentHubEntityService, ContentHubEntityService>()
-    .AddTransient<IMessageWorker, MessageWorker>();
+    .AddTransient<IContentHubQueryBuilderService, ContentHubQueryBuilderService>()
+    .AddTransient<IContentHubQueryService, ContentHubQueryService>()
+    .AddTransient<IContentHubSearchService, ContentHubSearchService>()
+    .AddTransient<ICultureHelper, CultureHelper>()
+    .AddTransient<IDocumentDataService, DocumentDataService>()
+    .AddTransient<IMessageWorker, MessageWorker>()
+    .AddTransient<ISearchApiHelper, SearchApiHelper>();
 
 builder.Services
     .AddOptions<ContentHubOptions>()

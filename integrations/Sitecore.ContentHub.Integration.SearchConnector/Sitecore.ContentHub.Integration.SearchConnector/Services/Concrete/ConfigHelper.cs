@@ -13,5 +13,10 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
         public IEnumerable<CultureMap> CultureMaps => _mappingConfig.CultureMaps;
 
         public IEnumerable<DefinitionMap> DefinitionMaps => _mappingConfig.DefinitionMaps;
+
+        public DefinitionMap GetDefinitionMap(string contentHubEntityDefinition)
+        {
+            return DefinitionMaps.SingleOrDefault(m => m.ContentHubEntityDefinition == contentHubEntityDefinition) ?? throw new InvalidDataException($"Definition map for {contentHubEntityDefinition} not found.");
+        }
     }
 }

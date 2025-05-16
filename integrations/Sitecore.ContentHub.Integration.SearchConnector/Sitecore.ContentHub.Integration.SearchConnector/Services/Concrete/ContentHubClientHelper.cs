@@ -6,9 +6,8 @@ using Stylelabs.M.Sdk.WebClient;
 
 namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 {
-    class ContentHubClientHelper(ILoggerFactory loggerFactory, IContentHubClientFactory clientFactory) : IContentHubClientHelper
+    class ContentHubClientHelper(ILogger<ContentHubClientHelper> logger, IContentHubClientFactory clientFactory) : IContentHubClientHelper
     {
-        private readonly ILogger logger = loggerFactory.CreateLogger<ContentHubClientHelper>();
         private readonly IWebMClient client = clientFactory.CreateClient();
         private readonly Random random = new();
 
@@ -53,13 +52,13 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
         {
             if (exception.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
             {
-                if (attemptNumber < PlatformConstants.Client.RequestRetryAttempts)
+                if (attemptNumber < ApiConstants.ContentHubClient.RequestRetryAttempts)
                 {
-                    var delay = random.Next(PlatformConstants.Client.RequestRetryDelayMin, PlatformConstants.Client.RequestRetryDelayMax);
-                    logger.LogWarning($"Too Many Requests exception received on attempt {attemptNumber}/{PlatformConstants.Client.RequestRetryAttempts} delaying for {delay}ms");
+                    var delay = random.Next(ApiConstants.ContentHubClient.RequestRetryDelayMin, ApiConstants.ContentHubClient.RequestRetryDelayMax);
+                    logger.LogWarning($"Too Many Requests exception received on attempt {attemptNumber}/{ApiConstants.ContentHubClient.RequestRetryAttempts} delaying for {delay}ms");
                     return delay;
                 }
-                logger.LogError($"Too Many Requests exception received on attempt {attemptNumber}/{PlatformConstants.Client.RequestRetryAttempts}. Exiting.");
+                logger.LogError($"Too Many Requests exception received on attempt {attemptNumber}/{ApiConstants.ContentHubClient.RequestRetryAttempts}. Exiting.");
             }
             return null;
         }
