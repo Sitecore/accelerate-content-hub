@@ -8,12 +8,14 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
     {
         public async Task<IEnumerable<string>?> DeleteSearchDocument(string contentHubEntityDefinition, string contentHubEntityIdentifier)
         {
+            logger.LogInformation($"Deleting search document for entity {contentHubEntityIdentifier}");
             var definitionMap = configHelper.GetDefinitionMap(contentHubEntityDefinition);
             return await searchApiHelper.DeleteDocument(definitionMap.SearchEntity, contentHubEntityIdentifier);
         }
 
         public async Task<IEnumerable<string>> UpsertSearchDocument(string contentHubEntityDefinition, string contentHubEntityIdentifier)
         {
+            logger.LogInformation($"Upserting search document for entity {contentHubEntityIdentifier}");
             var definitionMap = configHelper.GetDefinitionMap(contentHubEntityDefinition);
 
             var loadConfiguration = entityLoadConfigurationHelper.BuildForFields(definitionMap.FieldMaps);

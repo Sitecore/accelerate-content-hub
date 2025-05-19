@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Sitecore.ContentHub.Integration.SearchConnector
 {
-    public class HealthCheckHttpFunctions(ILogger<HealthCheckHttpFunctions> logger, IConfiguration configuration)
+    public class HealthCheckHttpFunctions(ILogger<HealthCheckHttpFunctions> logger)
     {
         [Function("HealthCheck")]
         public IActionResult Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)

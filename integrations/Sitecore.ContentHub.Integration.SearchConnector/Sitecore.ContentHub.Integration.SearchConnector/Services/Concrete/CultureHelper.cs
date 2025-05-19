@@ -1,11 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using Sitecore.ContentHub.Integration.SearchConnector.Models.Config;
+﻿using Sitecore.ContentHub.Integration.SearchConnector.Models.Config;
 using Sitecore.ContentHub.Integration.SearchConnector.Services.Abstract;
 using System.Globalization;
 
 namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 {
-    class CultureHelper(ILogger<CultureHelper> logger, IConfigHelper configHelper, IContentHubClientHelper contentHubClientHelper) : ICultureHelper
+    class CultureHelper(IConfigHelper configHelper, IContentHubClientHelper contentHubClientHelper) : ICultureHelper
     {
         public async Task<CultureInfo> GetContentHubDefaultCulture()
         {
