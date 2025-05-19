@@ -22,7 +22,7 @@
           {
             "Type": "optionlist",
             "SearchAttributeName": "short_description",
-            "ContentHubPropertyName": "PackagingType",
+            "ContentHubPropertyName": "PackagingTypes",
             "ContentHubOptionListName": "PackagingType"
           },
           {

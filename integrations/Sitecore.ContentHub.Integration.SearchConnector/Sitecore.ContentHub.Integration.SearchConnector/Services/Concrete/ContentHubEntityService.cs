@@ -29,7 +29,9 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 
         public IDictionary<string, object?> GetOptionListValueForCultures(IEntity entity, string propertyName, IDataSource optionList, CultureInfo? fallbackCulture)
         {
-            return entity.Cultures.ToDictionary(c => c.Name, c => GetOptionListValueForCulture(entity, propertyName, optionList.GetDataSourceValues(), c, fallbackCulture));
+            if (entity.GetProperty(propertyName).DataType.IsArray)
+                return entity.Cultures.ToDictionary(c => c.Name, c => GetOptionListValueForCulture(entity.GetPropertyValue<string[]>(propertyName), optionList.GetDataSourceValues(), c, fallbackCulture));
+            return entity.Cultures.ToDictionary(c => c.Name, c => GetOptionListValueForCulture(entity.GetPropertyValue<string>(propertyName), optionList.GetDataSourceValues(), c, fallbackCulture));
         }
 
         public async Task<T?> GetRawEntityById<T>(long id)
@@ -65,10 +67,15 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
             return entity.GetPropertyValue(propertyName, culture) ?? (fallbackCulture != null ? entity.GetPropertyValue(propertyName, fallbackCulture) : null);
         }
 
-        private object? GetOptionListValueForCulture(IEntity entity, string propertyName, IEnumerable<IDataSourceValue> dataSourceValues, CultureInfo culture, CultureInfo? fallbackCulture)
+        private object? GetOptionListValueForCulture(IEnumerable<string> identifier, IEnumerable<IDataSourceValue> dataSourceValues, CultureInfo culture, CultureInfo? fallbackCulture)
+        {
+            return identifier.Select(i => GetOptionListValueForCulture(i, dataSourceValues, culture, fallbackCulture));
+        }
+
+        private object? GetOptionListValueForCulture(string identifier, IEnumerable<IDataSourceValue> dataSourceValues, CultureInfo culture, CultureInfo? fallbackCulture)
         {
             // todo: deal with multi value
-            var value = dataSourceValues.FirstOrDefault(x => x.Identifier == entity.GetPropertyValue<string>(propertyName));
+            var value = dataSourceValues.FirstOrDefault(x => x.Identifier == identifier);
             return value?.Labels.SingleOrDefault(x => x.Key == culture).Value ?? value?.Labels.SingleOrDefault(x => x.Key == fallbackCulture).Value ?? value?.Identifier;
         }
 
