@@ -20,6 +20,12 @@
             "ContentHubPropertyName": "ProductName"
           },
           {
+            "Type": "optionlist",
+            "SearchAttributeName": "short_description",
+            "ContentHubPropertyName": "PackagingType",
+            "ContentHubOptionListName": "PackagingType"
+          },
+          {
             "Type": "relation",
             "SearchAttributeName": "catalog_names",
             "ContentHubRelations": [

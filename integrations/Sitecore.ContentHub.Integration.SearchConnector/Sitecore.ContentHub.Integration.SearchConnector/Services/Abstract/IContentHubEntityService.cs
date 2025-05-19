@@ -21,5 +21,7 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Abstract
         Task<IEnumerable<IEntity>> GetRelatedEntities(IEnumerable<IEntity> entities, IEnumerable<Relation> relations, IEntityLoadConfiguration? entityLoadConfiguration = null);
 
         IDictionary<string, object?> GetPropertyValueForCultures(IEntity entity, string propertyName, CultureInfo? fallbackCulture);
+
+        IDictionary<string, object?> GetOptionListValueForCultures(IEntity entity, string propertyName, IDataSource optionList, CultureInfo? fallbackCulture);
     }
 }

@@ -3,14 +3,13 @@ using Sitecore.ContentHub.Integration.SearchConnector.Models.ContentHub;
 using Sitecore.ContentHub.Integration.SearchConnector.Services.Abstract;
 using Stylelabs.M.Framework.Essentials.LoadConfigurations;
 using Stylelabs.M.Sdk.Contracts.Base;
-using Stylelabs.M.Sdk.Search;
 using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 {
-    class ContentHubEntityService(IContentHubClientHelper clientHelper, IContentHubQueryBuilderService queryBuilderService, IContentHubQueryService queryService, IContentHubSearchService searchService) : IContentHubEntityService
+    class ContentHubEntityService(IContentHubClientHelper clientHelper, IContentHubSearchService searchService) : IContentHubEntityService
     {
         public Task<IEntity> GetEntityById(long id, IEntityLoadConfiguration? loadConfiguration = null)
         {
@@ -24,8 +23,13 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 
         public IDictionary<string, object?> GetPropertyValueForCultures(IEntity entity, string propertyName, CultureInfo? fallbackCulture)
         {
-            var isMultiLanguage = entity.GetProperty(propertyName).IsMultiLanguage;
-            return entity.Cultures.ToDictionary(c => c.Name, c => isMultiLanguage ? GetPropertyValueForCulture(entity, propertyName, c, fallbackCulture) : entity.GetPropertyValue(propertyName));
+            var property = entity.GetProperty(propertyName);
+            return entity.Cultures.ToDictionary(c => c.Name, c => property.IsMultiLanguage ? GetPropertyValueForCulture(entity, propertyName, c, fallbackCulture) : entity.GetPropertyValue(propertyName));
+        }
+
+        public IDictionary<string, object?> GetOptionListValueForCultures(IEntity entity, string propertyName, IDataSource optionList, CultureInfo? fallbackCulture)
+        {
+            return entity.Cultures.ToDictionary(c => c.Name, c => GetOptionListValueForCulture(entity, propertyName, optionList.GetDataSourceValues(), c, fallbackCulture));
         }
 
         public async Task<T?> GetRawEntityById<T>(long id)
@@ -37,18 +41,8 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 
         public async Task<IEnumerable<IEntity>> GetRelatedEntities(IEnumerable<IEntity> entities, Relation relation, IEntityLoadConfiguration entityLoadConfiguration)
         {
-            // todo: refactor
-            var relationFilter = new RelationQueryFilter(relation.Name, relation.Role == RelationRole.Child ? Stylelabs.M.Framework.Essentials.LoadOptions.RelationRole.Child : Stylelabs.M.Framework.Essentials.LoadOptions.RelationRole.Parent);
-            QueryNodeFilter? filter = null;
-            foreach(var entityId in entities.Select(x => x.Id!.Value))
-            {
-                if (filter == null)
-                    filter = relationFilter.Id == entityId;
-                else
-                    filter = new LogicalQueryFilter(filter, relationFilter.Id == entityId, LogicalOperator.Or);
-            }
-
-            return await searchService.SearchAfter(filter!, entityLoadConfiguration: entityLoadConfiguration);
+            var filter = searchService.GetRelationFilter(relation.Name, relation.Role, entities.Select(x => x.Id!.Value));
+            return await searchService.SearchAfter(filter, entityLoadConfiguration: entityLoadConfiguration);
         }
 
         public async Task<IEnumerable<IEntity>> GetRelatedEntities(IEntity entity, IEnumerable<Relation> relations, IEntityLoadConfiguration? entityLoadConfiguration = null)
@@ -69,6 +63,13 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
         private object? GetPropertyValueForCulture(IEntity entity, string propertyName, CultureInfo culture, CultureInfo? fallbackCulture)
         {
             return entity.GetPropertyValue(propertyName, culture) ?? (fallbackCulture != null ? entity.GetPropertyValue(propertyName, fallbackCulture) : null);
+        }
+
+        private object? GetOptionListValueForCulture(IEntity entity, string propertyName, IEnumerable<IDataSourceValue> dataSourceValues, CultureInfo culture, CultureInfo? fallbackCulture)
+        {
+            // todo: deal with multi value
+            var value = dataSourceValues.FirstOrDefault(x => x.Identifier == entity.GetPropertyValue<string>(propertyName));
+            return value?.Labels.SingleOrDefault(x => x.Key == culture).Value ?? value?.Labels.SingleOrDefault(x => x.Key == fallbackCulture).Value ?? value?.Identifier;
         }
 
         private string GetEntityUrl(long entityId)

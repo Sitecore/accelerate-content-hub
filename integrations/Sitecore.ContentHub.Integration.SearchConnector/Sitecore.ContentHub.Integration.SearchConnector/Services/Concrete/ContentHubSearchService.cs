@@ -1,4 +1,5 @@
 ﻿using Sitecore.ContentHub.Integration.SearchConnector.Constants;
+using Sitecore.ContentHub.Integration.SearchConnector.Models.ContentHub;
 using Sitecore.ContentHub.Integration.SearchConnector.Services.Abstract;
 using Stylelabs.M.Base.Querying;
 using Stylelabs.M.Framework.Essentials.LoadConfigurations;
@@ -9,6 +10,23 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 {
     class ContentHubSearchService(IContentHubClientHelper clientHelper) : IContentHubSearchService
     {
+        public QueryNodeFilter GetRelationFilter(string relationName, RelationRole relationRole, IEnumerable<long> ids)
+        {
+            if(ids == null || !ids.Any())
+                throw new ArgumentException("Ids list cannot be empty");
+
+            var relationFilter = new RelationQueryFilter(relationName, relationRole == RelationRole.Child ? Stylelabs.M.Framework.Essentials.LoadOptions.RelationRole.Child : Stylelabs.M.Framework.Essentials.LoadOptions.RelationRole.Parent);
+            QueryNodeFilter? filter = null;
+            foreach (var entityId in ids)
+            {
+                if (filter == null)
+                    filter = relationFilter.Id == entityId;
+                else
+                    filter = new LogicalQueryFilter(filter, relationFilter.Id == entityId, LogicalOperator.Or);
+            }
+            return filter!;
+        }
+
         public async Task<IEnumerable<IEntity>> SearchAfter(QueryNodeFilter filter, IEnumerable<Sorting>? sorting = null, IEntityLoadConfiguration? entityLoadConfiguration = null, int take = ApiConstants.ContentHubClient.SearchAfterDefaultTake)
         {
             sorting = sorting ?? [new() { Field = SchemaConstants.SystemProperties.Identifier, Order = QuerySortOrder.Asc }];

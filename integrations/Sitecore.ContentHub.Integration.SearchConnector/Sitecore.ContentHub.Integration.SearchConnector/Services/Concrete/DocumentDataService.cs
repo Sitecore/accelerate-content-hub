@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 {
-    partial class DocumentDataService(ILogger<DocumentDataService> logger, ICultureHelper cultureHelper, IContentHubEntityService entityService, IContentHubAssetService assetService) : IDocumentDataService
+    partial class DocumentDataService(ILogger<DocumentDataService> logger, ICultureHelper cultureHelper, IContentHubClientHelper clientHelper, IContentHubEntityService entityService, IContentHubAssetService assetService) : IDocumentDataService
     {
         public async Task<IEnumerable<DocumentData>> GetDocumentData(DefinitionMap definitionMap, IEntity entity)
         {
@@ -26,6 +26,9 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
             {
                 if (fieldMap is PropertyFieldMap propertyFieldMap)
                     AddPropertyFieldData(documentDataDictionary, entity, propertyFieldMap, defaultCulture);
+
+                if (fieldMap is OptionListFieldMap optionListFieldMap)
+                    await AddOptionListFieldData(documentDataDictionary, entity, optionListFieldMap, defaultCulture);
 
                 else if (fieldMap is RelationFieldMap relationFieldMap)
                     await AddRelationFieldData(documentDataDictionary, entity, relationFieldMap, defaultCulture);
@@ -49,6 +52,19 @@ namespace Sitecore.ContentHub.Integration.SearchConnector.Services.Concrete
 
             foreach (var propertyValue in propertyValues)
                 AddToDocumentData(documentDataDictionary, propertyValue.Key, propertyFieldMap.SearchAttributeName, propertyValue.Value);
+        }
+
+        private async Task AddOptionListFieldData(Dictionary<string, DocumentData> documentDataDictionary, IEntity entity, OptionListFieldMap optionListFieldMap, CultureInfo defaultCulture)
+        {
+            var optionList = await clientHelper.Execute(client => client.DataSources.GetAsync(optionListFieldMap.ContentHubOptionListName));
+
+            var propertyValues = entityService
+                .GetOptionListValueForCultures(entity, optionListFieldMap.ContentHubPropertyName, optionList, defaultCulture)
+                .Where(x => x.Value != null)
+                .Cast<KeyValuePair<string, object>>();
+
+            foreach (var propertyValue in propertyValues)
+                AddToDocumentData(documentDataDictionary, propertyValue.Key, optionListFieldMap.SearchAttributeName, propertyValue.Value);
         }
 
         private async Task AddRelationFieldData(Dictionary<string, DocumentData> documentDataDictionary, IEntity entity, RelationFieldMap relationFieldMap, CultureInfo defaultCulture)
