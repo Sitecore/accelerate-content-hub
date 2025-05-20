@@ -1,4 +1,4 @@
-# Content Hub to Sitecore Search Connector
+﻿# Content Hub to Sitecore Search Connector
 
 **Content Hub Search Connector** is a reference implementation for synchronising data from [Sitecore Content Hub](https://www.sitecore.com/products/content-hub) to [Sitecore Search](https://www.sitecore.com/products/sitecore-search). Built with Azure Functions and designed for extensibility, this open-source solution provides a robust foundation for developing custom connectors tailored to your data model and business logic.
 
@@ -241,7 +241,7 @@ All endpoints expect a [Content Hub Action Message](https://doc.sitecore.com/ch/
 3. In Sitecore Content Hub:
 
    * Configure **upsert** and **delete** actions:
-   * 
+
      * Use **API Call actions** for HTTP-based integration, or
      * Use **Azure Service Bus actions** for queue-based integration.
    * Set up appropriate **triggers** to invoke these actions as part of your content lifecycle.
