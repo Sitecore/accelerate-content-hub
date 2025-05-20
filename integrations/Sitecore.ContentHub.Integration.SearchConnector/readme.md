@@ -1,78 +1,247 @@
-﻿# Content Hub Asset Importer
+﻿# Content Hub to Sitecore Search Connector
 
-**Content Hub Asset Importer** is an open-source integration for bulk uploading assets into [Sitecore Content Hub](https://www.sitecore.com/products/content-hub). Designed for flexibility, it uses Azure Functions to detect and import new assets from an Azure Storage container.
+**Content Hub Search Connector** is a reference implementation for synchronising data from [Sitecore Content Hub](https://www.sitecore.com/products/content-hub) to [Sitecore Search](https://www.sitecore.com/products/sitecore-search). Built with Azure Functions and designed for extensibility, this open-source solution provides a robust foundation for developing custom connectors tailored to your data model and business logic.
+
+It supports both API-driven and queue-based ingestion and uses a flexible JSON-based configuration for defining field mappings between Content Hub and Search.
+
+---
 
 ## Project Overview
 
-The solution includes three components:
+This solution includes three core projects:
 
-- `Sitecore.ContentHub.Integration.AssetImporter`  
-  The core Azure Function App that performs imports and metadata exports.
+* **`Sitecore.ContentHub.Integration.SearchConnector`**
+  The Azure Function App responsible for retrieving data from Content Hub and pushing it to Sitecore Search.
 
-- `Sitecore.ContentHub.Integration.AssetImporter.AppHost`  
-  A [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview) host project for local development and testing.
+* **`Sitecore.ContentHub.Integration.SearchConnector.AppHost`**
+  A [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview) host project for local development and orchestration.
 
-- `Sitecore.ContentHub.Integration.AssetImporter.ServiceDefaults`  
-  Shared defaults and configuration for Aspire-based local development.
+* **`Sitecore.ContentHub.Integration.SearchConnector.ServiceDefaults`**
+  Shared configuration for Aspire-based local development.
+
+---
 
 ## Prerequisites
 
-- An Azure Storage Account and container (or [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite) for local development)
-- A Sitecore Content Hub instance
-- An OAuth client registered in Content Hub
-- A user account with scoped permissions (see below)
+To run or deploy this connector, you’ll need:
 
-### Minimum Permissions for Import User
+* A Sitecore Content Hub instance
+* A Sitecore Search instance with an **API Push source**
+* An OAuth client in Content Hub with read access (see below)
+* A user account in Content Hub for authentication
+* Azure Service Bus for asynchronous message handling
 
-Following the principle of least privilege, the import user should have only the permissions necessary for uploading and managing assets they create.
+### Minimum Permissions
 
-| Definition | Conditions | Permissions |
-|-----------|------------|-------------|
-| `M.UploadConfiguration` | — | `Read` |
-| `M.Asset` | `M.Final.Lifecycle.Status = Created` AND created by current user | `Update` |
-| `M.Asset`, `M.File` | Created by current user | `Read`, `Create` |
+Following the principle of least privilege, the Content Hub user should only have **read** access to the entity definitions and related entities defined in your configuration. This ensures the connector can retrieve the required data without unnecessary privileges.
+
+---
 
 ## Configuration
 
-Set the following environment variables (in Azure or `local.settings.json`):
+The connector relies on a set of environment variables and a JSON configuration file to operate.
 
-| Variable | Description |
-|----------|-------------|
-| `AzureWebJobsStorage` | Azure Storage connection string (use `UseDevelopmentStorage=true` for Azurite) |
-| `AzureStorageContainerName` | Name of the storage container to monitor |
-| `ContentHubUrl` | Base URL of your Content Hub instance |
-| `ContentHubClientId` | OAuth Client ID for API access |
-| `ContentHubClientSecret` | OAuth Client Secret |
-| `ContentHubUsername` | Username of the import user |
-| `ContentHubPassword` | Password for the import user |
+### Environment Variables
 
-## Functions
+These variables should be set either in `local.settings.json` (for local development) or in the Azure Function App configuration.
 
-The Azure Function App includes four endpoints:
+| Variable                     | Description                                |
+| ---------------------------- | ------------------------------------------ |
+| `ContentHub:BaseUrl`         | Base URL of your Content Hub instance      |
+| `ContentHub:ClientId`        | OAuth client ID for Content Hub            |
+| `ContentHub:ClientSecret`    | OAuth client secret                        |
+| `ContentHub:Username`        | Username of the import user                |
+| `ContentHub:Password`        | Password for the import user               |
+| `Search:BaseUrl`             | Base URL of Sitecore Search                |
+| `Search:AuthToken`           | API key for the Search Push source         |
+| `Search:DomainId`            | Domain ID for Sitecore Search              |
+| `Search:SourceId`            | Source ID for the Search Push source       |
+| `ServiceBus:UpsertQueueName` | Name of the Azure Service Bus upsert queue |
+| `ServiceBus:DeleteQueueName` | Name of the Azure Service Bus delete queue |
 
-### `AssetImporterTimer`
-Runs every 15 minutes by default. It scans the configured storage container and imports new files into Content Hub.
+---
 
-### `AssetImporterHttp`
-An HTTP-triggered version of the timer logic, useful for manual testing or triggering imports on demand.
+### `config.json` Structure
 
-### `MetadataExport`
-Returns a JSON array of `{ id, identifier, filename }` for assets that:
-- Are in the `Created` lifecycle state
-- Were created by the configured user
+The `config.json` file defines the mapping between Content Hub entities and Sitecore Search attributes.
 
-### `MetadataExportExcel`
-Returns the same data as `MetadataExport`, formatted as a downloadable Excel (.xlsx) file. This can be used for metadata enrichment or mapping.
+#### Root
+
+```json
+{
+  "CultureMaps": CultureMap[],
+  "DefinitionMaps": DefinitionMap[]
+}
+```
+
+---
+
+#### `CultureMap`
+
+Maps cultures between Content Hub and Sitecore Search. Only the cultures defined here will be processed.
+
+```json
+{
+  "ContentHubCulture": "en-US",
+  "SearchCulture": "en_us_"
+}
+```
+
+---
+
+#### `DefinitionMap`
+
+Defines how entities in Content Hub map to entities in Sitecore Search.
+
+```json
+{
+  "ContentHubEntityDefinition": "M.PCM.Product",
+  "SearchEntity": "product",
+  "FieldMaps": FieldMap[]
+}
+```
+
+---
+
+### Field Maps
+
+The `FieldMaps` array supports a range of mapping types:
+
+#### `PropertyFieldMap`
+
+Maps a property from Content Hub to a Search attribute.
+
+```json
+{
+  "Type": "property",
+  "SearchAttributeName": "name",
+  "ContentHubPropertyName": "ProductName"
+}
+```
+
+---
+
+#### `OptionListFieldMap`
+
+Maps an option list property from Content Hub to a Search attribute.
+
+```json
+{
+  "Type": "optionlist",
+  "SearchAttributeName": "packaging",
+  "ContentHubPropertyName": "PackagingType",
+  "ContentHubOptionListName": "M.PackagingType"
+}
+```
+
+---
+
+#### `RelationFieldMap`
+
+Follows a relation chain and maps a property on the related entity.
+
+```json
+{
+  "Type": "relation",
+  "SearchAttributeName": "markets",
+  "ContentHubRelations": [
+    {
+      "Name": "PCMCatalogToProduct",
+      "Role": "Child"
+    },
+    {
+      "Name": "PCMMarketToCatalog",
+      "Role": "Parent"
+    }
+  ],
+  "ContentHubRelatedPropertyName": "MarketLabel"
+}
+```
+
+---
+
+#### `PublicLinkFieldMap`
+
+Maps a public link to a Search attribute, optionally creating the link if it doesn’t exist.
+
+```json
+{
+  "Type": "publiclink",
+  "SearchAttributeName": "image_url",
+  "ContentHubResourceName": "downloadOriginal",
+  "CreateLinkIfNotExists": true,
+  "ContentHubRelations": [
+    { "Name": "PCMProductToMasterAsset", "Role": "Parent" }
+  ]
+}
+```
+
+---
+
+#### `ExtractedContentFieldMap`
+
+Maps extracted document content to a Search attribute.
+
+```json
+{
+  "Type": "extractedcontent",
+  "SearchAttributeName": "specifications",
+  "ContentHubRelations": [
+    { "Name": "PCMProductToDocumentAsset", "Role": "Parent" }
+  ]
+}
+```
+
+---
+
+#### `Relation`
+
+Defines a Content Hub relation to follow when mapping nested properties.
+
+```json
+{
+  "Name": "PCMProductToMasterAsset",
+  "Role": "Parent"
+}
+```
+
+---
+
+## Azure Functions
+
+The connector exposes HTTP endpoints and Service Bus listeners for maximum integration flexibility.
+
+### HTTP Endpoints
+
+| Function           | Description                                                              |
+| ------------------ | ------------------------------------------------------------------------ |
+| `HealthCheck`      | Basic health check – returns `OK`                                        |
+| `RunUpsert`        | Receives a Content Hub Action Message and upserts the entity to Search   |
+| `RunDelete`        | Receives a Content Hub Action Message and deletes the entity from Search |
+| `AddUpsertMessage` | Queues an upsert message on the Service Bus                              |
+| `AddDeleteMessage` | Queues a delete message on the Service Bus                               |
+
+---
+
+### Service Bus Listeners
+
+| Function    | Queue        | Description                                              |
+| ----------- | ------------ | -------------------------------------------------------- |
+| `RunUpsert` | Upsert queue | Processes queued messages to upsert entities into Search |
+| `RunDelete` | Delete queue | Processes queued messages to delete entities from Search |
+
+All endpoints expect a [Content Hub Action Message](https://doc.sitecore.com/ch/en/developers/content-hub/index.html#Actions) in the request body.
+
+---
 
 ## Usage
 
-1. Deploy the Azure Function App, or run it locally via the Aspire host.
-2. Drop files into the configured Azure Storage container.
-3. Either wait for the timer function to trigger, or manually trigger the import using the HTTP endpoint.
-4. Use the metadata export functions to retrieve Content Hub identifiers for the imported assets.
+1. Deploy the Azure Function App or run locally using the Aspire host.
+2. Create and provide a `config.json` file defining your entity and field mappings.
+3. In Sitecore Content Hub:
 
-These identifiers can help with post-processing steps like adding metadata or managing lifecycle states.
+   * Configure **upsert** and **delete** actions:
 
-> ⚠️ **Notes**
-> - Avoid uploading files with duplicate filenames. The system relies on filenames to map assets during metadata operations.
-> - Once metadata has been applied, update the asset’s `FinalLifeCycleStatus` to remove it from future exports.
+     * Use **API Call actions** for HTTP-based integration, or
+     * Use **Azure Service Bus actions** for queue-based integration.
+   * Set up appropriate **triggers** to invoke these actions as part of your content lifecycle.

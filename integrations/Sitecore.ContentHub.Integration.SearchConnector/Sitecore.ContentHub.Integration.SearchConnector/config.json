@@ -20,12 +20,6 @@
             "ContentHubPropertyName": "ProductName"
           },
           {
-            "Type": "optionlist",
-            "SearchAttributeName": "short_description",
-            "ContentHubPropertyName": "PackagingTypes",
-            "ContentHubOptionListName": "PackagingType"
-          },
-          {
             "Type": "relation",
             "SearchAttributeName": "catalog_names",
             "ContentHubRelations": [
@@ -35,21 +29,6 @@
               }
             ],
             "ContentHubRelatedPropertyName": "CatalogLabel"
-          },
-          {
-            "Type": "relation",
-            "SearchAttributeName": "markets",
-            "ContentHubRelations": [
-              {
-                "Name": "PCMCatalogToProduct",
-                "Role": "Child"
-              },
-              {
-                "Name": "PCMMarketToCatalog",
-                "Role": "Parent"
-              }
-            ],
-            "ContentHubRelatedPropertyName": "MarketLabel"
           },
           {
             "Type": "publiclink",
@@ -62,16 +41,6 @@
             ],
             "ContentHubResourceName": "downloadOriginal",
             "CreateLinkIfNotExists": true
-          },
-          {
-            "Type": "extractedcontent",
-            "SearchAttributeName": "description",
-            "ContentHubRelations": [
-              {
-                "Name": "PCMProductToDocumentAsset",
-                "Role": "Parent"
-              }
-            ]
           }
         ]
       }
