@@ -4,6 +4,10 @@ This is a starter project intended to help in the development of external compon
 
 The project is also configured to allow use of tailwind in css modules.
 
+> ⚠️ **Note**
+>
+> The provided code is intended as a guideline and must be tailored to suit your specific implementation requirements. Please ensure thorough end-to-end testing is conducted to validate its functionality and performance in your environment.
+
 ## Develop
 
 The `src` directory contains the following directories:
