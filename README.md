@@ -21,10 +21,8 @@ If you want to make changes to the code, follow these steps:
 1. Fork the Accelerate for Content Hub GitHub repo.
 2. Clone the forked repo to your local machine.
 3. Create a feature branch from `main` for your changes. e.g. `git checkout -b my-feature-branch`
-4. `npm install`
-5. `npm run dev` (to preview your changes locally)
-6. Make your changes
+4. Make your changes
    1. For more information on how to add content visit the [contribute](https://developers.sitecore.com/contribute) page
-7. Commit, push to your remote fork of the Accelerate for Content repo, then open a pull request (PR) to the `main` branch of the Accelerate for Content repo.
+5. Commit, push to your remote fork of the Accelerate for Content repo, then open a pull request (PR) to the `main` branch of the Accelerate for Content repo.
 
 Your changes will be reviewed and merged if appropriate.
