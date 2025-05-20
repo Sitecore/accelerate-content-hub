@@ -1,21 +1,25 @@
 ﻿# Content Hub to Sitecore Search Connector
 
-**Content Hub Search Connector** is a reference implementation for synchronising data between [Sitecore Content Hub](https://www.sitecore.com/products/content-hub) and [Sitecore Search](https://www.sitecore.com/products/sitecore-search). Built with Azure Functions and designed for extensibility, this open-source solution provides a solid foundation for implementing custom integrations tailored to your data model and business rules.
+**Content Hub Search Connector** is a reference implementation for synchronising data from [Sitecore Content Hub](https://www.sitecore.com/products/content-hub) to [Sitecore Search](https://www.sitecore.com/products/sitecore-search). Built with Azure Functions and designed for extensibility, this open-source solution provides a robust foundation for developing custom connectors tailored to your data model and business logic.
 
-It supports both API-based and queue-based ingestion, with flexible field mapping via a JSON configuration.
+It supports both API-driven and queue-based ingestion and uses a flexible JSON-based configuration for defining field mappings between Content Hub and Search.
+
+---
 
 ## Project Overview
 
-This solution includes three key projects:
+This solution includes three core projects:
 
 * **`Sitecore.ContentHub.Integration.SearchConnector`**
-  The core Azure Function App that retrieves data from Content Hub and pushes it into Sitecore Search.
+  The Azure Function App responsible for retrieving data from Content Hub and pushing it to Sitecore Search.
 
 * **`Sitecore.ContentHub.Integration.SearchConnector.AppHost`**
-  A [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview) host for local development and orchestration.
+  A [.NET Aspire](https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview) host project for local development and orchestration.
 
 * **`Sitecore.ContentHub.Integration.SearchConnector.ServiceDefaults`**
-  Default service configurations shared across the Aspire project.
+  Shared configuration for Aspire-based local development.
+
+---
 
 ## Prerequisites
 
@@ -23,153 +27,221 @@ To run or deploy this connector, you’ll need:
 
 * A Sitecore Content Hub instance
 * A Sitecore Search instance with an **API Push source**
-* An OAuth client in Content Hub with appropriate read access (see permissions below)
+* An OAuth client in Content Hub with read access (see below)
 * A user account in Content Hub for authentication
-* Azure Service Bus (for asynchronous message handling)
+* Azure Service Bus for asynchronous message handling
 
-### Minimum Permissions for Content Hub User
+### Minimum Permissions
 
-Following the principle of least privilege, the Content Hub user should only have **read** access to the entity definitions and related entities that are included in the configuration. This ensures data can be retrieved without the user having broader access than necessary.
+Following the principle of least privilege, the Content Hub user should only have **read** access to the entity definitions and related entities defined in your configuration. This ensures the connector can retrieve the required data without unnecessary privileges.
+
+---
 
 ## Configuration
 
-The following environment variables must be set (in `local.settings.json` or your Azure Function App settings):
+The connector relies on a set of environment variables and a JSON configuration file to operate.
 
-| Variable                     | Description                                      |
-| ---------------------------- | ------------------------------------------------ |
-| `ContentHub:BaseUrl`         | Base URL of your Content Hub instance            |
-| `ContentHub:ClientId`        | OAuth Client ID                                  |
-| `ContentHub:ClientSecret`    | OAuth Client Secret                              |
-| `ContentHub:Username`        | Username of the import user                      |
-| `ContentHub:Password`        | Password for the import user                     |
-| `Search:BaseUrl`             | Base URL of the Sitecore Search API              |
-| `Search:AuthToken`           | API key for the Search Push source               |
-| `Search:DomainId`            | Domain ID for Sitecore Search                    |
-| `Search:SourceId`            | Source ID for the Search Push source             |
-| `ServiceBus:UpsertQueueName` | Azure Service Bus queue name for upsert messages |
-| `ServiceBus:DeleteQueueName` | Azure Service Bus queue name for delete messages |
+### Environment Variables
 
-### `config.json` Schema
+These variables should be set either in `local.settings.json` (for local development) or in the Azure Function App configuration.
 
-A `config.json` file must be provided to define the mapping logic between Content Hub entities and Sitecore Search schema.
+| Variable                     | Description                                |
+| ---------------------------- | ------------------------------------------ |
+| `ContentHub:BaseUrl`         | Base URL of your Content Hub instance      |
+| `ContentHub:ClientId`        | OAuth client ID for Content Hub            |
+| `ContentHub:ClientSecret`    | OAuth client secret                        |
+| `ContentHub:Username`        | Username of the import user                |
+| `ContentHub:Password`        | Password for the import user               |
+| `Search:BaseUrl`             | Base URL of Sitecore Search                |
+| `Search:AuthToken`           | API key for the Search Push source         |
+| `Search:DomainId`            | Domain ID for Sitecore Search              |
+| `Search:SourceId`            | Source ID for the Search Push source       |
+| `ServiceBus:UpsertQueueName` | Name of the Azure Service Bus upsert queue |
+| `ServiceBus:DeleteQueueName` | Name of the Azure Service Bus delete queue |
 
-#### Root Structure
+---
+
+### `config.json` Structure
+
+The `config.json` file defines the mapping between Content Hub entities and Sitecore Search attributes.
+
+#### Root
 
 ```json
 {
-  "CultureMaps": [/* CultureMap */],
-  "DefinitionMaps": [/* DefinitionMap */]
+  "CultureMaps": CultureMap[],
+  "DefinitionMaps": DefinitionMap[]
 }
 ```
 
-#### CultureMap
+---
+
+#### `CultureMap`
+
+Maps cultures between Content Hub and Sitecore Search. Only the cultures defined here will be processed.
 
 ```json
 {
   "ContentHubCulture": "en-US",
-  "SearchCulture": "en_US"
+  "SearchCulture": "en_us_"
 }
 ```
 
-#### DefinitionMap
+---
+
+#### `DefinitionMap`
+
+Defines how entities in Content Hub map to entities in Sitecore Search.
 
 ```json
 {
-  "ContentHubEntityDefinition": "M.Asset",
-  "SearchEntity": "digital-asset",
-  "FieldMaps": [ /* FieldMap types */ ]
+  "ContentHubEntityDefinition": "M.PCM.Product",
+  "SearchEntity": "product",
+  "FieldMaps": FieldMap[]
 }
 ```
 
-##### PropertyFieldMap
+---
+
+### Field Maps
+
+The `FieldMaps` array supports a range of mapping types:
+
+#### `PropertyFieldMap`
+
+Maps a property from Content Hub to a Search attribute.
 
 ```json
 {
   "Type": "property",
-  "SearchAttributeName": "title",
-  "ContentHubPropertyName": "Title"
+  "SearchAttributeName": "name",
+  "ContentHubPropertyName": "ProductName"
 }
 ```
 
-##### OptionListFieldMap
+---
+
+#### `OptionListFieldMap`
+
+Maps an option list property from Content Hub to a Search attribute.
 
 ```json
 {
   "Type": "optionlist",
-  "SearchAttributeName": "category",
-  "ContentHubPropertyName": "AssetCategory",
-  "ContentHubOptionListName": "AssetCategoryList" /* optional /*
+  "SearchAttributeName": "packaging",
+  "ContentHubPropertyName": "PackagingType",
+  "ContentHubOptionListName": "M.PackagingType"
 }
 ```
 
-##### RelationFieldMap
+---
+
+#### `RelationFieldMap`
+
+Follows a relation chain and maps a property on the related entity.
 
 ```json
 {
   "Type": "relation",
-  "SearchAttributeName": "related-items",
-  "ContentHubRelations": [ /* optional /*
+  "SearchAttributeName": "markets",
+  "ContentHubRelations": [
     {
-      "Name": "AssetToProduct",
+      "Name": "PCMCatalogToProduct",
       "Role": "Child"
+    },
+    {
+      "Name": "PCMMarketToCatalog",
+      "Role": "Parent"
     }
-  ]
+  ],
+  "ContentHubRelatedPropertyName": "MarketLabel"
 }
 ```
 
-##### PublicLinkFieldMap
+---
+
+#### `PublicLinkFieldMap`
+
+Maps a public link to a Search attribute, optionally creating the link if it doesn’t exist.
 
 ```json
 {
   "Type": "publiclink",
-  "SearchAttributeName": "download-url",
-  "ContentHubRelations": [], /* optional /*
-  "ContentHubResourceName": "DownloadOriginal",
-  "CreateLinkIfNotExists": true
+  "SearchAttributeName": "image_url",
+  "ContentHubResourceName": "downloadOriginal",
+  "CreateLinkIfNotExists": true,
+  "ContentHubRelations": [
+    { "Name": "PCMProductToMasterAsset", "Role": "Parent" }
+  ]
 }
 ```
 
-##### ExtractedContentFieldMap
+---
+
+#### `ExtractedContentFieldMap`
+
+Maps extracted document content to a Search attribute.
 
 ```json
 {
   "Type": "extractedcontent",
-  "SearchAttributeName": "full-text",
-  "ContentHubRelations": [] /* optional /*
+  "SearchAttributeName": "specifications",
+  "ContentHubRelations": [
+    { "Name": "PCMProductToDocumentAsset", "Role": "Parent" }
+  ]
 }
 ```
 
-## Functions
+---
 
-The Azure Function App provides both HTTP and Service Bus-triggered functions for flexibility in how data is pushed to Search.
+#### `Relation`
+
+Defines a Content Hub relation to follow when mapping nested properties.
+
+```json
+{
+  "Name": "PCMProductToMasterAsset",
+  "Role": "Parent"
+}
+```
+
+---
+
+## Azure Functions
+
+The connector exposes HTTP endpoints and Service Bus listeners for maximum integration flexibility.
 
 ### HTTP Endpoints
 
-| Function           | Purpose                                                                           |
-| ------------------ | --------------------------------------------------------------------------------- |
-| `HealthCheck`      | Returns `"OK"` – basic availability check                                         |
-| `RunUpsert`        | Processes an incoming Content Hub Action Message and upserts the entity to Search |
-| `RunDelete`        | Processes an Action Message and removes the entity from Search                    |
-| `AddUpsertMessage` | Places the message on the upsert Service Bus queue                                |
-| `AddDeleteMessage` | Places the message on the delete Service Bus queue                                |
+| Function           | Description                                                              |
+| ------------------ | ------------------------------------------------------------------------ |
+| `HealthCheck`      | Basic health check – returns `OK`                                        |
+| `RunUpsert`        | Receives a Content Hub Action Message and upserts the entity to Search   |
+| `RunDelete`        | Receives a Content Hub Action Message and deletes the entity from Search |
+| `AddUpsertMessage` | Queues an upsert message on the Service Bus                              |
+| `AddDeleteMessage` | Queues a delete message on the Service Bus                               |
+
+---
 
 ### Service Bus Listeners
 
-| Function    | Trigger      | Purpose                                 |
-| ----------- | ------------ | --------------------------------------- |
-| `RunUpsert` | Upsert queue | Upserts an entity from a queued message |
-| `RunDelete` | Delete queue | Deletes an entity from a queued message |
+| Function    | Queue        | Description                                              |
+| ----------- | ------------ | -------------------------------------------------------- |
+| `RunUpsert` | Upsert queue | Processes queued messages to upsert entities into Search |
+| `RunDelete` | Delete queue | Processes queued messages to delete entities from Search |
 
-All functions expect a [Content Hub Action Message](https://doc.sitecore.com/ch/en/developers/content-hub/index.html#Actions) JSON payload.
+All endpoints expect a [Content Hub Action Message](https://doc.sitecore.com/ch/en/developers/content-hub/index.html#Actions) in the request body.
+
+---
 
 ## Usage
 
-1. Deploy the Azure Function App or run locally via Aspire.
-2. Configure a **config.json** file with appropriate field mappings and entity definitions.
-3. In Content Hub:
+1. Deploy the Azure Function App or run locally using the Aspire host.
+2. Create and provide a `config.json` file defining your entity and field mappings.
+3. In Sitecore Content Hub:
 
-   * Create upsert and delete actions using either:
+   * Configure **upsert** and **delete** actions:
 
-     * **API Call Actions** (pointing to HTTP functions), or
-     * **Azure Service Bus Actions** (pointing to upsert/delete queues)
-   * Configure appropriate triggers to invoke those actions based on your publishing workflow.
+     * Use **API Call actions** for HTTP-based integration, or
+     * Use **Azure Service Bus actions** for queue-based integration.
+   * Set up appropriate **triggers** to invoke these actions as part of your content lifecycle.
