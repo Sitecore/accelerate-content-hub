@@ -2,6 +2,10 @@
 
 **Content Hub Asset Importer** is an open-source integration for bulk uploading assets into [Sitecore Content Hub](https://www.sitecore.com/products/content-hub). Designed for flexibility, it uses Azure Functions to detect and import new assets from an Azure Storage container.
 
+> ⚠️ **Note**
+>
+> The provided code is intended as a guideline and must be tailored to suit your specific implementation requirements. Please ensure thorough end-to-end testing is conducted to validate its functionality and performance in your environment.
+
 ## Project Overview
 
 The solution includes three components:
