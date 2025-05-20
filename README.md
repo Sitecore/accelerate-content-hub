@@ -18,13 +18,13 @@ Sitecore has adopted a Code of Conduct that we expect project participants to ad
 
 If you want to make changes to the code, follow these steps:
 
-1. Fork the Developer Portal Repo GitHub repo.
+1. Fork the Accelerate for Content Hub GitHub repo.
 2. Clone the forked repo to your local machine.
 3. Create a feature branch from `main` for your changes. e.g. `git checkout -b my-feature-branch`
 4. `npm install`
 5. `npm run dev` (to preview your changes locally)
-6. Make your changes (_if you changes include images please use the `public/images` folder to store the image(s)_)
+6. Make your changes
    1. For more information on how to add content visit the [contribute](https://developers.sitecore.com/contribute) page
-7. Commit, push to your remote fork of the Developer Portal repo, then open a pull request (PR) to the `main` branch of the Developer Portal repo.
+7. Commit, push to your remote fork of the Accelerate for Content repo, then open a pull request (PR) to the `main` branch of the Accelerate for Content repo.
 
-Your changes will be reviewed and merged if appropriate. Changes to Accelerate recipe will be reviewed by the Sitecore teams including Product, before approvals.
+Your changes will be reviewed and merged if appropriate.
