@@ -2,6 +2,10 @@
 
 This is a starter project intended to help in the development of CLI plugins for Content Hub.
 
+> ⚠️ **Note**
+>
+> The provided code is intended as a guideline and must be tailored to suit your specific implementation requirements. Please ensure thorough end-to-end testing is conducted to validate its functionality and performance in your environment.
+
 ## Develop
 
 The solution contains two projects `Sitecore.CH.Cli.Plugins.Base` and `Sitecore.CH.Cli.Plugins.Starter`.
