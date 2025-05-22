@@ -27,7 +27,7 @@ namespace Sitecore.ContentHub.Integration.SearchConnector
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error processing message: {MessageId}", message.MessageId);
-                await messageActions.DeadLetterMessageAsync(message, null, ex.Message);
+                await messageActions.AbandonMessageAsync(message);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Sitecore.ContentHub.Integration.SearchConnector
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error processing message: {MessageId}", message.MessageId);
-                await messageActions.DeadLetterMessageAsync(message, null, ex.Message);
+                await messageActions.AbandonMessageAsync(message);
             }
         }
     }
