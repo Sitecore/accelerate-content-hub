@@ -7,7 +7,6 @@ It supports both API-driven and queue-based ingestion and uses a flexible JSON-b
 > ⚠️ **Note**
 >
 > The provided code is intended as a guideline and must be tailored to suit your specific implementation requirements. Please ensure thorough end-to-end testing is conducted to validate its functionality and performance in your environment.
-
 ---
 
 ## Project Overview
