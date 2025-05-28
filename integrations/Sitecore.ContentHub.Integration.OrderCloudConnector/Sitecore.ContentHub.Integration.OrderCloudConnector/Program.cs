@@ -1,4 +1,3 @@
-using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,14 +8,36 @@ using Sitecore.ContentHub.Integration.OrderCloudConnector.Services.Concrete;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 var queueName = builder.Configuration.GetValue<string>($"{ServiceBusOptions.ConfigurationSectionName}:{nameof(ServiceBusOptions.Name)}") ?? "";
-builder.AddServiceDefaults()
-    .AddAzureServiceBusClient(queueName);
+if(!string.IsNullOrWhiteSpace(queueName))
+    builder.AddAzureServiceBusClient(queueName);
 
 builder.ConfigureFunctionsWebApplication();
 
 builder.Services
+    .AddScoped<IContentHubClientFactory, ContentHubClientFactory>()
+    .AddScoped<IOrderCloudClientFactory, OrderCloudClientFactory>()
+    .AddTransient<IContentHubClientHelper, ContentHubClientHelper>()
+    .AddTransient<IContentHubEntityService, ContentHubEntityService>()
+    .AddTransient<IOrderCloudClientHelper, OrderCloudClientHelper>()
     .AddTransient<IMessageWorker, MessageWorker>();
+
+builder.Services
+    .AddOptions<ContentHubOptions>()
+    .BindConfiguration(ContentHubOptions.ConfigurationSectionName)
+    .ValidateDataAnnotations();
+
+builder.Services
+    .AddOptions<OrderCloudOptions>()
+    .BindConfiguration(OrderCloudOptions.ConfigurationSectionName)
+    .ValidateDataAnnotations();
+
+builder.Services
+    .AddOptions<SchemaOptions>()
+    .BindConfiguration(SchemaOptions.ConfigurationSectionName)
+    .ValidateDataAnnotations();
 
 builder.Services
     .AddOptions<ServiceBusOptions>()

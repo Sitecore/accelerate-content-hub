@@ -7,7 +7,15 @@ namespace Sitecore.ContentHub.Integration.OrderCloudConnector.Models.ContentHub
         public required string Identifier { get; set; }
 
         [JsonPropertyName("entity_definition")]
-        public required string EntityDefinition { get; set; }
-        public required string Operation { get; set; }
+        public string? EntityDefinition { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public required EntityUpdateOperation Operation { get; set; }
+    }
+
+    public enum EntityUpdateOperation
+    {
+        Update,
+        Delete
     }
 }
