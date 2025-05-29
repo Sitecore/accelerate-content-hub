@@ -1,4 +1,4 @@
-﻿using Sitecore.ContentHub.Integration.AssetImporter.Models;
+﻿using Sitecore.ContentHub.Integration.AssetImporter.Models.ContentHub;
 
 namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Abstract
 {

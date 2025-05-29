@@ -1,13 +1,14 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Sitecore.ContentHub.Integration.AssetImporter.Models.Options;
 using Sitecore.ContentHub.Integration.AssetImporter.Services.Abstract;
 
 namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Concrete
 {
-    class StorageService(ILoggerFactory loggerFactory, IApplicationSettings applicationSettings, BlobServiceClient blobServiceClient) : IStorageService
+    class StorageService(ILoggerFactory loggerFactory, IOptions<AzureOptions> azureOptions, BlobServiceClient blobServiceClient) : IStorageService
     {
         private readonly ILogger logger = loggerFactory.CreateLogger<StorageService>();
-        private readonly IApplicationSettings applicationSettings = applicationSettings;
         private readonly BlobServiceClient blobServiceClient = blobServiceClient;
 
         public async Task<IEnumerable<string>> GetFilesAsync()
@@ -36,7 +37,7 @@ namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Concrete
 
         async Task<BlobContainerClient> GetContainerClient()
         {
-            var containerClient = blobServiceClient.GetBlobContainerClient(applicationSettings.AzureStorageContainerName);
+            var containerClient = blobServiceClient.GetBlobContainerClient(azureOptions.Value.StorageContainerName);
             await containerClient.CreateIfNotExistsAsync();
             return containerClient;
         }
