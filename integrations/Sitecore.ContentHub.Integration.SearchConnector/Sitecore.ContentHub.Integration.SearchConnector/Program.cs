@@ -18,8 +18,8 @@ builder.ConfigureFunctionsWebApplication();
 
 builder.Services
     .AddSingleton<IConfigHelper, ConfigHelper>()
+    .AddScoped<IContentHubClientFactory, ContentHubClientFactory>()
     .AddTransient<IContentHubAssetService, ContentHubAssetService>()
-    .AddTransient<IContentHubClientFactory, ContentHubClientFactory>()
     .AddTransient<IContentHubClientHelper, ContentHubClientHelper>()
     .AddTransient<IContentHubEntityLoadConfigurationHelper, ContentHubEntityLoadConfigurationHelper>()
     .AddTransient<IContentHubEntityService, ContentHubEntityService>()
@@ -33,19 +33,16 @@ builder.Services
 
 builder.Services
     .AddOptions<ContentHubOptions>()
-    //.Bind(builder.Configuration.GetSection(ContentHubOptions.ConfigurationSectionName))
     .BindConfiguration(ContentHubOptions.ConfigurationSectionName)
     .ValidateDataAnnotations();
 
 builder.Services
     .AddOptions<SearchOptions>()
-    //.Bind(builder.Configuration.GetSection(SearchOptions.ConfigurationSectionName))
     .BindConfiguration(SearchOptions.ConfigurationSectionName)
     .ValidateDataAnnotations();
 
 builder.Services
     .AddOptions<ServiceBusOptions>()
-    //.Bind(builder.Configuration.GetSection(ServiceBusOptions.ConfigurationSectionName))
     .BindConfiguration(ServiceBusOptions.ConfigurationSectionName)
     .ValidateDataAnnotations();
 

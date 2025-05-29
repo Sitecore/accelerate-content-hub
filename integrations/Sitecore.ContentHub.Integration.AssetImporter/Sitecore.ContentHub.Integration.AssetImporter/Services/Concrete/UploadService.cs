@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Sitecore.ContentHub.Integration.AssetImporter.Constants;
-using Sitecore.ContentHub.Integration.AssetImporter.Models;
+using Sitecore.ContentHub.Integration.AssetImporter.Models.ContentHub;
 using Sitecore.ContentHub.Integration.AssetImporter.Services.Abstract;
 using Stylelabs.M.Sdk.WebClient.Http;
 using System.Net.Mime;

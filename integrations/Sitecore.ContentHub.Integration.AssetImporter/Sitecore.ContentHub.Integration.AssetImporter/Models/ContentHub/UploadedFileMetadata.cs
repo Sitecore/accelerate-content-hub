@@ -1,4 +1,4 @@
-﻿namespace Sitecore.ContentHub.Integration.AssetImporter.Models
+﻿namespace Sitecore.ContentHub.Integration.AssetImporter.Models.ContentHub
 {
     public class UploadedFileMetadata
     {

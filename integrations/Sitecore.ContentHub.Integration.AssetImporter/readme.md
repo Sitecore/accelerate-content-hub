@@ -43,12 +43,12 @@ Set the following environment variables (in Azure or `local.settings.json`):
 | Variable | Description |
 |----------|-------------|
 | `AzureWebJobsStorage` | Azure Storage connection string (use `UseDevelopmentStorage=true` for Azurite) |
-| `AzureStorageContainerName` | Name of the storage container to monitor |
-| `ContentHubUrl` | Base URL of your Content Hub instance |
-| `ContentHubClientId` | OAuth Client ID for API access |
-| `ContentHubClientSecret` | OAuth Client Secret |
-| `ContentHubUsername` | Username of the import user |
-| `ContentHubPassword` | Password for the import user |
+| `Azure:StorageContainerName` | Name of the storage container to monitor |
+| `ContentHub:BaseUrl` | Base URL of your Content Hub instance |
+| `ContentHub:ClientId` | OAuth Client ID for API access |
+| `ContentHub:ClientSecret` | OAuth Client Secret |
+| `ContentHub:Username` | Username of the import user |
+| `ContentHub:Password` | Password for the import user |
 
 ## Functions
 

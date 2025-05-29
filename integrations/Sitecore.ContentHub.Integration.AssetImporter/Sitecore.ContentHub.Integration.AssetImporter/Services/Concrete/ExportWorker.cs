@@ -1,5 +1,7 @@
-﻿using Sitecore.ContentHub.Integration.AssetImporter.Constants;
-using Sitecore.ContentHub.Integration.AssetImporter.Models;
+﻿using Microsoft.Extensions.Options;
+using Sitecore.ContentHub.Integration.AssetImporter.Constants;
+using Sitecore.ContentHub.Integration.AssetImporter.Models.ContentHub;
+using Sitecore.ContentHub.Integration.AssetImporter.Models.Options;
 using Sitecore.ContentHub.Integration.AssetImporter.Services.Abstract;
 using Stylelabs.M.Base.Querying;
 using Stylelabs.M.Framework.Essentials.LoadConfigurations;
@@ -7,7 +9,7 @@ using Stylelabs.M.Sdk.Search;
 
 namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Concrete
 {
-    class ExportWorker(IApplicationSettings applicationSettings, IContentHubEntityHelper entityHelper, IContentHubSearchHelper searchAfterHelper, IExcelHelper excelHelper) : IExportWorker
+    class ExportWorker(IOptions<ContentHubOptions> contentHubOptions, IContentHubEntityHelper entityHelper, IContentHubSearchHelper searchAfterHelper, IExcelHelper excelHelper) : IExportWorker
     {
         public async Task<IEnumerable<UploadedFileMetadata>> GenerateMetadataExport()
         {
@@ -22,7 +24,7 @@ namespace Sitecore.ContentHub.Integration.AssetImporter.Services.Concrete
 
         private async Task<IEnumerable<UploadedFileMetadata>> GetUploadedFilesMetadata()
         {
-            var userId = await entityHelper.GetIdFromUsernameAsync(applicationSettings.ContentHubUsername!);
+            var userId = await entityHelper.GetIdFromUsernameAsync(contentHubOptions.Value.Username);
             var createdStatusId = await entityHelper.GetIdFromIdentifierAsync(DataConstants.Identifiers.FinalLifecycleStatus_Created);
 
             var filter = QueryFilterBuilder.Definition.Name == SchemaConstants.Asset.DefinitionName && QueryFilterBuilder.Parent(SchemaConstants.Asset.Relations.FinalLifeCycleStatusToAsset).Id == createdStatusId && QueryFilterBuilder.CreatedBy == userId;
