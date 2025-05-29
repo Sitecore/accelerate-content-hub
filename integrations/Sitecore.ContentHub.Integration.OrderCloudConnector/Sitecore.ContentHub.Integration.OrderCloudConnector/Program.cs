@@ -10,9 +10,9 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-var queueName = builder.Configuration.GetValue<string>($"{ServiceBusOptions.ConfigurationSectionName}:{nameof(ServiceBusOptions.Name)}") ?? "";
-if(!string.IsNullOrWhiteSpace(queueName))
-    builder.AddAzureServiceBusClient(queueName);
+var busName = builder.Configuration.GetValue<string>($"{ServiceBusOptions.ConfigurationSectionName}:{nameof(ServiceBusOptions.Name)}") ?? "";
+if(!string.IsNullOrWhiteSpace(busName))
+    builder.AddAzureServiceBusClient(busName);
 
 builder.ConfigureFunctionsWebApplication();
 

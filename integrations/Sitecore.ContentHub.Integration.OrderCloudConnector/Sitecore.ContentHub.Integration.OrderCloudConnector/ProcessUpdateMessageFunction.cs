@@ -9,8 +9,8 @@ namespace Sitecore.ContentHub.Integration.OrderCloudConnector;
 
 public class ProcessUpdateMessageFunction(ILogger<ProcessUpdateMessageFunction> logger, IMessageWorker messageWorker)
 {
-    [Function(nameof(ProcessUpdateMessageFunction))]
-    public async Task Run(
+    [Function(nameof(RunUpdate))]
+    public async Task RunUpdate(
         [ServiceBusTrigger("%ServiceBus:UpdateQueueName%", Connection = "%ServiceBus:Name%")]
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
