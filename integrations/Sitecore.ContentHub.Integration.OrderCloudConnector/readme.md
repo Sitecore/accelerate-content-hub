@@ -2,7 +2,11 @@
 
 **OrderCloud Connector** is a reference implementation for synchronising product and catalogue data from [Sitecore Content Hub](https://www.sitecore.com/products/content-hub) to [Sitecore OrderCloud](https://ordercloud.io/). Built with Azure Functions and designed for extensibility, this open-source connector is triggered by Experience Edge webhooks and processes updates asynchronously via Azure Service Bus.
 
-This solution provides a robust foundation for integrating your Content Hub product data into OrderCloud’s commerce-ready APIs.
+This solution provides a robust foundation for integrating your Content Hub product data into OrderCloudâ€™s commerce-ready APIs.
+
+> âš ï¸ **Note**
+>
+> The provided code is intended as a guideline and must be tailored to suit your specific implementation requirements. Please ensure thorough end-to-end testing is conducted to validate its functionality and performance in your environment.
 
 ## Project Overview
 
@@ -19,7 +23,7 @@ This connector is made up of three projects:
 
 ## Prerequisites
 
-To run or deploy this connector, you’ll need:
+To run or deploy this connector, youâ€™ll need:
 
 * A Sitecore Content Hub instance with **Experience Edge** enabled
 * A configured **Experience Edge webhook** for update notifications
@@ -69,9 +73,9 @@ The Azure Function App provides both HTTP endpoints and Service Bus listeners to
 
 | Function           | Purpose                                                                |
 | ------------------ | ---------------------------------------------------------------------- |
-| `HealthCheck`      | Basic availability check – returns `"OK"`                              |
+| `HealthCheck`      | Basic availability check â€“ returns `"OK"`                              |
 | `AddUpdateMessage` | Accepts a JSON payload and places it on the update queue               |
-| `Update`           | Entry point for Experience Edge – processes webhook update immediately |
+| `Update`           | Entry point for Experience Edge â€“ processes webhook update immediately |
 
 ### Service Bus Listener
 
