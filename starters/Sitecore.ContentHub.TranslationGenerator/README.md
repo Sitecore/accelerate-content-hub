@@ -1,7 +1,9 @@
 # Sitecore.CH.TranslationGenerator
 ## Preparation
 * Export languages from Content Hub (https://doc.sitecore.com/ch/en/users/content-hub/export-translations.html)
-
+* Generate a key for the translation service https://learn.microsoft.com/en-us/azure/ai-services/translator/how-to/create-translator-resource
+* Update the appsettings.local.json file with your API key.
+ 
 ## Application Usage
 1. Build and run application.
 2. You will be asked for a target language - enter e.g. 'de-DE' for German
