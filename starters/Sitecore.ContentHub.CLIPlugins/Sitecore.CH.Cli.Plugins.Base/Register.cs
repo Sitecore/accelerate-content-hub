@@ -2,7 +2,7 @@
 using Sitecore.CH.Cli.Plugins.Base.Services.Abstract;
 using Sitecore.CH.Cli.Plugins.Base.Services.Concrete;
 
-namespace Sitecore.ContentHub.CLIPlugins.Base
+namespace Sitecore.CH.Cli.Plugins.Base
 {
     public static class Register
     {

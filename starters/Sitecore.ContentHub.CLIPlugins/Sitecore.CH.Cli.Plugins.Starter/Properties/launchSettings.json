@@ -14,6 +14,16 @@
       "commandName": "Executable",
       "executablePath": "C:\\ProgramData\\chocolatey\\lib\\sitecore.ch.cli\\tools\\ch-cli.exe",
       "commandLineArgs": "starter get-entity --id 4"
+    },
+    "Refresh Rendition Command": {
+      "commandName": "Executable",
+      "executablePath": "C:\\ProgramData\\chocolatey\\lib\\sitecore.ch.cli\\tools\\ch-cli.exe",
+      "commandLineArgs": "starter refresh-rendition --id 29805"
+    },
+    "Refresh Rendition from File Command": {
+      "commandName": "Executable",
+      "executablePath": "C:\\ProgramData\\chocolatey\\lib\\sitecore.ch.cli\\tools\\ch-cli.exe",
+      "commandLineArgs": "starter refresh-rendition --file C:\\temp\\idstorefresh.txt"
     }
   }
 }
