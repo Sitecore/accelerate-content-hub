@@ -17,13 +17,21 @@ namespace Sitecore.CH.Cli.Plugins.Starter
                 .AddCommandHandler<EchoCommandHandler, EchoParameters>()
                 .AddCommandHandler<GetEntityCommandHandler, GetEntityParameters>()
                 .AddCommandHandler<RefreshRenditionCommandHandler, GetEntityParameters>()
-
+                .AddCommandHandler<AssetReportCommandHandler>()
                 .AddBaseServices();
         }
 
         public void RegisterCommands(ICommandRegistry registry)
         {
-            registry.RegisterCommandGroup("starter", [new HelloCommand(), new EchoCommand(), new GetEntityCommand(), new RefreshRenditionCommand()], "CLI plugin starter test commands");
+            registry.RegisterCommandGroup("starter",
+                [
+                    new HelloCommand(),
+                    new EchoCommand(),
+                    new GetEntityCommand(),
+                    new RefreshRenditionCommand(),
+                    new AssetReportCommand(),
+                ],
+                "CLI plugin starter test commands.");
         }
     }
 }
